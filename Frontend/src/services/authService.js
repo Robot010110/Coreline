@@ -63,6 +63,22 @@ export async function staffIdLogin(loginId, password) {
   return data.user;
 }
 
+// POST /api/auth/open-login — Supervisor / Zone Manager (Regional Manager)
+// sign in with no User ID and no password: just the role. The backend
+// answers with the one designated account of that role (see
+// backend/src/utils/openAccess.js); it can be switched off server-side
+// with OPEN_ROLE_LOGIN=false, in which case this rejects with a 403.
+// `role` is the backend role: "SUPERVISOR" | "REGIONAL_MANAGER".
+export async function openLogin(role) {
+  const data = await apiRequest("/auth/open-login", {
+    method: "POST",
+    body: { role },
+    auth: false,
+  });
+  setToken(data.token);
+  return data.user;
+}
+
 // POST /api/auth/register — ADMIN-only. Creates a new staff account
 // (Admin/Regional Manager/Supervisor/Overlooking Supervisor). Used by
 // AdminStaffPage.jsx; doesn't touch the caller's own token.

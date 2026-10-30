@@ -35,12 +35,13 @@ export function getEmployee(id) {
 // createEmployee — POST /api/employees (ADMIN/REGIONAL_MANAGER/
 // SUPERVISOR, scoped to markets the caller can access — see
 // employeesController.createEmployee). Existed on the backend with no
-// frontend caller until AdminPeoplePage.jsx's "Add Person" flow; it
-// always creates a WORKER (the endpoint has no role field of its own).
+// frontend caller until AdminPeoplePage.jsx's "Add Person" flow. `role`
+// is WORKER (default) or CASHIER; `employeeCode` (the User ID) and
+// `password` are optional and generated when left out.
 // Response includes `temporaryPassword`, returned once only — the
 // caller must show it and never assume it can be fetched again.
-export function createEmployee({ name, position, secondaryRole, shift, marketId, password }) {
-  return apiRequest("/employees", { method: "POST", body: { name, position, secondaryRole, shift, marketId, password } });
+export function createEmployee({ name, position, secondaryRole, shift, marketId, password, role, employeeCode }) {
+  return apiRequest("/employees", { method: "POST", body: { name, position, secondaryRole, shift, marketId, password, role, employeeCode } });
 }
 
 // updateEmployee — also how a staff member activates a "pending" hire

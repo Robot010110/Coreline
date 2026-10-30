@@ -79,8 +79,9 @@ src/
   controllers/         the actual business logic, one file per resource
 prisma/
   schema.prisma
-  seed.js              creates one Admin, one Regional Manager, one
-                       Supervisor, two Employees, and a couple of Tasks
+  seed.js              creates the zones/markets/demo products and exactly
+                       five accounts: Admin, Supervisor, Zone Manager, one
+                       Worker, one Cashier
 ```
 
 ## API overview
@@ -88,6 +89,8 @@ prisma/
 | Method | Path                              | Who                          |
 |---|---|---|
 | POST | `/api/auth/login`                   | public                        |
+| POST | `/api/auth/staff-id-login`          | public (User ID + password — Admin uses this) |
+| POST | `/api/auth/open-login`              | public, no credentials — Supervisor / Zone Manager only (`OPEN_ROLE_LOGIN=false` disables) |
 | POST | `/api/auth/employee-login`          | public                        |
 | POST | `/api/auth/register`                | Admin (creates staff)         |
 | GET  | `/api/zones`                        | Admin, Regional Manager       |

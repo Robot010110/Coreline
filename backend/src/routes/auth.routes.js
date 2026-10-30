@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, listStaffAccounts, staffLogin, staffIdLogin, employeeLogin, cashierLogin } from "../controllers/authController.js";
+import { register, listStaffAccounts, staffLogin, staffIdLogin, openLogin, employeeLogin, cashierLogin } from "../controllers/authController.js";
 import { requireAuth, requireStaffRole } from "../middleware/auth.js";
 import { authLimiter } from "../middleware/rateLimit.js";
 import {
@@ -8,6 +8,7 @@ import {
   staffRegisterSchema,
   staffLoginSchema,
   staffIdLoginSchema,
+  openLoginSchema,
   employeeLoginSchema,
   cashierLoginSchema,
   listStaffAccountsQuerySchema,
@@ -38,6 +39,11 @@ router.get(
 // (guessing a password/employee code), so they get the tight limit.
 router.post("/login", authLimiter, validateBody(staffLoginSchema), staffLogin);
 router.post("/staff-id-login", authLimiter, validateBody(staffIdLoginSchema), staffIdLogin);
+// No credentials — Supervisor / Zone Manager only; see utils/openAccess.js.
+// Not on authLimiter: there is nothing to brute-force (no secret is
+// checked), and a whole market's staff sharing one Wi-Fi/IP would burn
+// through that tight budget just by tapping their role.
+router.post("/open-login", validateBody(openLoginSchema), openLogin);
 router.post("/employee-login", authLimiter, validateBody(employeeLoginSchema), employeeLogin);
 router.post("/cashier-login", authLimiter, validateBody(cashierLoginSchema), cashierLogin);
 

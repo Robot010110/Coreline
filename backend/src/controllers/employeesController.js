@@ -115,18 +115,26 @@ export async function getEmployee(req, res, next) {
 // never retrievable again after this response (only its hash is stored).
 export async function createEmployee(req, res, next) {
   try {
-    const { name, position, secondaryRole, shift, marketId, password } = req.body;
+    const { name, position, secondaryRole, shift, marketId, password, role = "WORKER", employeeCode: chosenCode } = req.body;
 
     const allowed = await staffCanAccessMarket(req.user, marketId);
     if (allowed === "not-found") return res.status(400).json({ error: "marketId does not refer to an existing market" });
     if (!allowed) return res.status(403).json({ error: "You do not have access to this market" });
 
-    const employeeCode = await generateUniqueEmployeeCode();
+    if (chosenCode && (await userIdTaken(chosenCode))) {
+      return res.status(409).json({ error: "This User ID is already in use" });
+    }
+    const employeeCode = chosenCode ?? (await generateUniqueEmployeeCode());
     const plainPassword = password ?? crypto.randomBytes(4).toString("hex");
     const passwordHash = await bcrypt.hash(plainPassword, 10);
 
+    // A Cashier signs in through /auth/cashier-login (by `username`) and
+    // keeps their shift in `cashierShift`; a Worker signs in by
+    // employeeCode and keeps it in `shift`. Same User ID either way.
+    const roleFields = role === "CASHIER" ? { role, username: employeeCode, cashierShift: shift } : { role, shift };
+
     const employee = await prisma.employee.create({
-      data: { name, position, secondaryRole, shift, marketId, employeeCode, passwordHash },
+      data: { name, position, secondaryRole, marketId, employeeCode, passwordHash, ...roleFields },
     });
 
     res.status(201).json({

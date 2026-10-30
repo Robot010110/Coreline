@@ -125,12 +125,16 @@ navigation model throughout, not a separate look per role.
 
 Real, backend-connected features:
 
-- **Auth** — Employee (`POST /api/auth/employee-login`), Cashier
-  (`POST /api/auth/cashier-login`), and Supervisor
-  (`POST /api/auth/login`, same endpoint every other staff role uses) all
-  authenticate against real accounts and keep the session across page
-  refreshes (JWT, with an optional longer-lived "remember me" token for
-  Employee/Cashier).
+- **Auth** — Admin signs in with a username and password
+  (`POST /api/auth/staff-id-login`); Employee (`POST /api/auth/employee-login`)
+  and Cashier (`POST /api/auth/cashier-login`) sign in with their User ID and
+  password; Supervisor and Zone Manager (Regional Manager) sign in with **no
+  credentials** — tapping the role enters directly
+  (`POST /api/auth/open-login`, switch off with `OPEN_ROLE_LOGIN=false`).
+  The session survives page refreshes (JWT, with an optional longer-lived
+  "remember me" token for Employee/Cashier). The seed creates only Admin,
+  Supervisor, Zone Manager, one Worker and one Cashier — the Admin adds
+  everyone else (see DEPLOY.md).
 - **Profile** (`GET /api/profile`) — name, employee ID, role, shift,
   market, employment start date, profile picture (when set), department.
 - **Daily activity log** (`GET/POST/PATCH/DELETE /api/activities`) —

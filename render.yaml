@@ -53,6 +53,10 @@ services:
         generateValue: true          # Render generates a strong random value
       - key: NODE_ENV
         value: production
+      # Supervisor and Zone Manager sign in with no credentials (tapping the
+      # role enters directly). Set to "false" to require real accounts.
+      - key: OPEN_ROLE_LOGIN
+        value: "true"
       # CORS_ORIGIN is intentionally left unset -> the API allows any
       # origin. This app authenticates with Bearer tokens, not cookies, so
       # allow-all CORS carries no CSRF/ambient-credential risk. To lock it

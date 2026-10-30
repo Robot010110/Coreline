@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma.js";
 import { signStaffToken, signEmployeeToken } from "../utils/jwt.js";
 import { userIdTaken } from "../utils/accountIds.js";
+import { OPEN_ACCESS_ACCOUNTS, openRoleLoginEnabled } from "../utils/openAccess.js";
 
 // Admin Phase 2 §16-17: a SUSPENDED/BANNED account must never
 // authenticate, even with the correct password — checked at every login
@@ -127,11 +128,12 @@ export async function staffLogin(req, res, next) {
 
 // POST /api/auth/staff-id-login — Supervisor/Overlooking authenticate
 // with a case-insensitive "User ID" (loginId) instead of email (spec:
-// "em881"/"EM881"/"Em881" all resolve to the same account). Admin/
-// Regional Manager keep using POST /api/auth/login (email) — they have
-// no loginId in this spec, so nothing here applies to them; a User row
-// with loginId: null simply never matches any lookup value, so this
-// endpoint naturally can't be used to reach an Admin/RM account.
+// "em881"/"EM881"/"Em881" all resolve to the same account). Any staff
+// account that has a loginId can use it — including an Admin (the admin
+// login screen takes a username, which is just the Admin's loginId). A
+// User row with loginId: null never matches any lookup value, so
+// accounts without one (e.g. the open-access Supervisor/Zone Manager,
+// see utils/openAccess.js) can't be reached through this endpoint.
 export async function staffIdLogin(req, res, next) {
   try {
     const { loginId, password } = req.body;
@@ -171,6 +173,50 @@ export async function staffIdLogin(req, res, next) {
         // frontend was always undefined for this login path even though
         // LoginPage.jsx already expected it — needed so the Supervisor
         // homepage can reach its own zone's real Zone Announcements).
+        zoneId: user.managedMarket?.zoneId ?? user.managedOverlookingMarket?.zoneId ?? null,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST /api/auth/open-login — Supervisor / Zone Manager sign in with no
+// User ID and no password: the body is just { role }, and the response is
+// the same shape staffIdLogin returns for the one designated account of
+// that role (see utils/openAccess.js for which, and for the
+// OPEN_ROLE_LOGIN=false kill switch). A suspended/banned account is still
+// refused, same as every other login endpoint.
+export async function openLogin(req, res, next) {
+  try {
+    if (!openRoleLoginEnabled()) {
+      return res.status(403).json({ error: "Sign-in without credentials is turned off." });
+    }
+    const { role } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: { email: OPEN_ACCESS_ACCOUNTS[role].email },
+      include: { managedZones: true, managedMarket: true, managedOverlookingMarket: true },
+    });
+    if (!user || user.role !== role) {
+      return res.status(404).json({ error: "This role has no account set up yet." });
+    }
+    const statusBlock = accountStatusBlockMessage(user.accountStatus);
+    if (statusBlock) {
+      return res.status(403).json({ error: statusBlock });
+    }
+
+    const token = signStaffToken(user);
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        loginId: user.loginId,
+        zoneIds: user.managedZones.map((z) => z.id),
+        marketId: user.managedMarket?.id ?? user.managedOverlookingMarket?.id ?? null,
         zoneId: user.managedMarket?.zoneId ?? user.managedOverlookingMarket?.zoneId ?? null,
       },
     });

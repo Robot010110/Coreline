@@ -546,13 +546,10 @@ const STAFF_ROLES = [
 ];
 
 // AddPersonModal — the real create-person workflow, in two real forms:
-//   - "New Employee" -> POST /api/employees (createEmployee). ADMIN/RM/
-//     Supervisor-authorized and already existed server-side with no
-//     frontend ever built for it; this is that first UI. It always
-//     creates a WORKER (the endpoint has no role field — Cashier/Butcher
-//     need a username/cashierShift this endpoint doesn't set), so the
-//     form is honest about that rather than offering a role picker that
-//     would silently do nothing.
+//   - "New Employee" -> POST /api/employees (createEmployee). The admin
+//     picks Worker or Cashier, the market and shift, and may choose the
+//     User ID and password themselves; either one left blank is
+//     generated and shown once on the confirmation screen.
 //   - "New Staff Account" -> POST /api/auth/register (registerStaff) —
 //     the exact same fields/logic AdminStaffPage.jsx's form used.
 // Both return a one-time credential (temporary password / the password
@@ -565,7 +562,7 @@ function AddPersonModal({ markets, onClose, onCreated }) {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null); // { name, credentialLabel, credentialValue }
 
-  const [empForm, setEmpForm] = useState({ name: "", position: "", marketId: "", shift: "" });
+  const [empForm, setEmpForm] = useState({ name: "", position: "", marketId: "", shift: "", role: "WORKER", userId: "", password: "" });
   const [staffForm, setStaffForm] = useState({ name: "", email: "", password: "", role: "SUPERVISOR", loginId: "" });
 
   async function handleCreateEmployee(e) {
@@ -578,8 +575,11 @@ function AddPersonModal({ markets, onClose, onCreated }) {
         position: empForm.position.trim(),
         marketId: empForm.marketId,
         shift: empForm.shift || undefined,
+        role: empForm.role,
+        employeeCode: empForm.userId.trim() || undefined,
+        password: empForm.password || undefined,
       });
-      setResult({ name: created.name, credentialLabel: t("settings.employeeId"), credentialValue: created.employeeCode, extra: `Temporary password: ${created.temporaryPassword}` });
+      setResult({ name: created.name, credentialLabel: t("settings.employeeId"), credentialValue: created.employeeCode, extra: `Password: ${created.temporaryPassword}` });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("admin.couldNotCreateThisEmployee"));
     } finally {
@@ -661,8 +661,25 @@ function AddPersonModal({ markets, onClose, onCreated }) {
             <option value="">{t("admin.shiftOptionalEGMorning")}</option>
             {EMPLOYEE_SHIFT_VALUES.map((s) => <option key={s} value={s}>{t(SHIFT_META[s].labelKey)}</option>)}
           </select>
+          <div className="grid grid-cols-2 gap-2">
+            {[{ v: "WORKER", l: "roles.worker" }, { v: "CASHIER", l: "roles.cashier" }].map((r) => (
+              <button
+                key={r.v}
+                type="button"
+                onClick={() => setEmpForm((f) => ({ ...f, role: r.v }))}
+                aria-pressed={empForm.role === r.v}
+                className={`rounded-lg px-3 py-2.5 text-xs font-semibold transition-colors ${
+                  empForm.role === r.v ? "bg-white/[0.12] text-white ring-1 ring-[#F47A20]/50" : "bg-white/[0.04] text-[#9AA1B4] hover:bg-white/[0.08]"
+                }`}
+              >
+                {t(r.l)}
+              </button>
+            ))}
+          </div>
+          <input value={empForm.userId} onChange={(e) => setEmpForm((f) => ({ ...f, userId: e.target.value }))} placeholder={t("admin.signInUserIdOptional")} autoCapitalize="none" autoCorrect="off" className={fieldClass} />
+          <input type="text" value={empForm.password} onChange={(e) => setEmpForm((f) => ({ ...f, password: e.target.value }))} placeholder={t("admin.signInPasswordOptional")} autoComplete="off" minLength={6} className={fieldClass} />
           <p className="text-[11px] text-[#6B7284]">
-            {t("admin.createsAWorkerWithAGenerated")}
+            {t("admin.leaveBlankToGenerate")}
           </p>
           {error && <p className="text-xs text-red-400">{error}</p>}
           <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold text-white bg-[#F47A20] hover:bg-[#ff8b36] disabled:bg-white/10 disabled:text-[#4C5266] transition-colors">

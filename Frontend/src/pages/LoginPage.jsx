@@ -2,35 +2,46 @@ import { useState } from "react";
 import RoleSelectScreen from "../components/auth/RoleSelectScreen";
 import EmployeeLoginScreen from "../components/auth/EmployeeLoginScreen";
 import StaffLoginScreen from "../components/auth/StaffLoginScreen";
+import OpenAccessScreen from "../components/auth/OpenAccessScreen";
 
-// LoginPage.jsx — three stages: Who's logging in? -> Employee Login /
-// Staff Login -> real session. Replaces the old Role -> sub-step ->
-// identifier -> password wizard: each Stage-2 screen now shows its full
-// credential form at once (see EmployeeLoginScreen.jsx / StaffLoginScreen.jsx
-// for the real per-role backend calls each one makes).
+// LoginPage.jsx — Who's logging in? -> one of three Stage-2 screens:
+//   Employee (Worker / Cashier) -> EmployeeLoginScreen: code/username + password
+//   Admin                       -> StaffLoginScreen:    username + password
+//   Supervisor / Regional (Zone) Manager -> OpenAccessScreen: no form at
+//       all — tapping the role signs straight in (see OpenAccessScreen.jsx
+//       and backend/src/utils/openAccess.js).
 const STAGE_ROLE = "role";
 const STAGE_EMPLOYEE = "employee";
-const STAGE_STAFF = "staff";
+const STAGE_ADMIN = "admin";
+const STAGE_OPEN = "open";
 
 export default function LoginPage({ onLogin }) {
   const [stage, setStage] = useState(STAGE_ROLE);
-  const [initialStaffRole, setInitialStaffRole] = useState("supervisor");
+  const [openRoleKey, setOpenRoleKey] = useState("supervisor");
 
   function handleRoleSelect(key) {
     if (key === "employee") {
       setStage(STAGE_EMPLOYEE);
+    } else if (key === "admin") {
+      setStage(STAGE_ADMIN);
     } else {
-      setInitialStaffRole(key); // admin | regionalManager | supervisor
-      setStage(STAGE_STAFF);
+      setOpenRoleKey(key); // supervisor | regionalManager
+      setStage(STAGE_OPEN);
     }
   }
 
+  const backToRoles = () => setStage(STAGE_ROLE);
+
   if (stage === STAGE_EMPLOYEE) {
-    return <EmployeeLoginScreen onBack={() => setStage(STAGE_ROLE)} onLogin={onLogin} />;
+    return <EmployeeLoginScreen onBack={backToRoles} onLogin={onLogin} />;
   }
 
-  if (stage === STAGE_STAFF) {
-    return <StaffLoginScreen initialRole={initialStaffRole} onBack={() => setStage(STAGE_ROLE)} onLogin={onLogin} />;
+  if (stage === STAGE_ADMIN) {
+    return <StaffLoginScreen onBack={backToRoles} onLogin={onLogin} />;
+  }
+
+  if (stage === STAGE_OPEN) {
+    return <OpenAccessScreen roleKey={openRoleKey} onBack={backToRoles} onLogin={onLogin} />;
   }
 
   return <RoleSelectScreen onSelect={handleRoleSelect} />;

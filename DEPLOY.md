@@ -40,14 +40,41 @@ place.
    - Save → it redeploys. When green, open the `teammart-web` URL. **That
      link is the app.**
 
-## Demo logins (created by the seed)
+## Accounts (created by the seed)
 
-| Role               | Login                         | Password      |
-|--------------------|-------------------------------|---------------|
-| Admin              | `admin@teammart.test`         | `Admin123!`   |
-| Supervisor         | `em881`                       | `Sr@9907`     |
-| Employee (Worker)  | `TM-1001`                     | `Employee123!`|
-| Cashier            | `em149`                       | `Rr@0049`     |
+The app starts with just these. Everyone else is added by the Admin from
+the **People** screen (account type, market, shift, User ID and password
+are all chosen there).
+
+| Role               | How to sign in                                   |
+|--------------------|--------------------------------------------------|
+| Admin              | username `rahand` + the Admin password           |
+| Supervisor         | no credentials — tap **Supervisor** on the login screen |
+| Zone Manager       | no credentials — tap **Regional Manager** on the login screen |
+| Worker             | `worker01` / `Worker123!`                        |
+| Cashier            | `cashier01` / `Cashier123!`                      |
+
+The Admin username/password, and the Worker/Cashier ones, can be changed
+before the first deploy by setting `SEED_ADMIN_USERNAME`,
+`SEED_ADMIN_PASSWORD`, `SEED_WORKER_USERNAME`, `SEED_WORKER_PASSWORD`,
+`SEED_CASHIER_USERNAME`, `SEED_CASHIER_PASSWORD` on `teammart-api`. The
+seed only creates accounts; it never overwrites a password someone has
+changed since.
+
+**Supervisor and Zone Manager need no login.** Anyone who can open the
+app can enter as them. To turn that off, set `OPEN_ROLE_LOGIN=false` on
+`teammart-api` (see below).
+
+### Starting over on a database that already has the old demo people
+
+```bash
+cd backend
+npm run accounts:reset -- --yes
+```
+
+This deletes every account **and everything that depends on them** (tasks,
+attendance, chats, reports, and the markets/zones/products tied to old
+accounts), then re-seeds. It cannot be undone.
 
 ## Optional hardening (after it works)
 

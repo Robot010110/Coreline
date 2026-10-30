@@ -7,6 +7,8 @@
 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
+import { OPEN_ACCESS_ACCOUNTS } from "../src/utils/openAccess.js";
 
 const prisma = new PrismaClient();
 
@@ -25,111 +27,85 @@ async function findOrCreateMarket(name, zoneId, extra = {}) {
   return prisma.market.create({ data: { name, zoneId, status: "ACTIVE", ...extra } });
 }
 
+// The only accounts the app starts with. Everything else is added by the
+// Admin from the People screen (market, shift, User ID and password all
+// chosen there).
+//   Admin          signs in with a username + password (below).
+//   Supervisor     } sign in with NO credentials — tapping the role on the
+//   Zone Manager   } login screen enters directly (see utils/openAccess.js).
+//   Worker/Cashier sign in with a code/username + password (below).
+// Create-only: re-running the seed (Render does on every deploy) never
+// overwrites a password someone has since changed.
+const ADMIN_USERNAME = process.env.SEED_ADMIN_USERNAME || "rahand";
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || "paywand";
+const WORKER_USERNAME = process.env.SEED_WORKER_USERNAME || "worker01";
+const WORKER_PASSWORD = process.env.SEED_WORKER_PASSWORD || "Worker123!";
+const CASHIER_USERNAME = process.env.SEED_CASHIER_USERNAME || "cashier01";
+const CASHIER_PASSWORD = process.env.SEED_CASHIER_PASSWORD || "Cashier123!";
+
+// An open-access account has no password anyone knows: a random one is
+// hashed and thrown away, so the credential endpoints can't be used on it.
+async function unusablePasswordHash() {
+  return bcrypt.hash(randomBytes(32).toString("hex"), 10);
+}
+
 async function main() {
   // ---------------------------------------------------------------
   // Staff accounts.
   // ---------------------------------------------------------------
-  const adminPasswordHash = await bcrypt.hash("Admin123!", 10);
   await prisma.user.upsert({
-    where: { email: "admin@teammart.test" },
-    update: {},
-    create: { name: "Rawand Salih", email: "admin@teammart.test", passwordHash: adminPasswordHash, role: "ADMIN" },
-  });
-
-  const rmPasswordHash = await bcrypt.hash("Manager123!", 10);
-  const regionalManager = await prisma.user.upsert({
-    where: { email: "ali.hassan@teammart.test" },
+    where: { email: "admin@coreline.test" },
     update: {},
     create: {
-      name: "Ali Hassan",
-      email: "ali.hassan@teammart.test",
-      passwordHash: rmPasswordHash,
-      role: "REGIONAL_MANAGER",
+      name: "Rahand",
+      email: "admin@coreline.test",
+      loginId: ADMIN_USERNAME,
+      passwordHash: await bcrypt.hash(ADMIN_PASSWORD, 10),
+      role: "ADMIN",
     },
   });
 
-  // Zone Manager (Regional Manager role) for Zone 2 specifically — see
-  // the Zone-2 restructuring below. A separate account from Ali Hassan,
-  // who keeps managing Zones 1 and 3.
-  const zoneManagerPasswordHash = await bcrypt.hash("ZoneManager123!", 10);
   const zoneManager = await prisma.user.upsert({
-    where: { email: "ali.farsgardi@teammart.test" },
-    update: { name: "Ali Fars Gardi" },
+    where: { email: OPEN_ACCESS_ACCOUNTS.REGIONAL_MANAGER.email },
+    update: {},
     create: {
-      name: "Ali Fars Gardi",
-      email: "ali.farsgardi@teammart.test",
-      passwordHash: zoneManagerPasswordHash,
+      name: OPEN_ACCESS_ACCOUNTS.REGIONAL_MANAGER.name,
+      email: OPEN_ACCESS_ACCOUNTS.REGIONAL_MANAGER.email,
+      passwordHash: await unusablePasswordHash(),
       role: "REGIONAL_MANAGER",
     },
   });
 
-  // Sabur Xorani — the existing "Qushtapa 1 Supervisor" placeholder
-  // account, given a real identity + a case-insensitive User ID login
-  // (loginId) instead of the email-only login it started with (see
-  // authController.staffIdLogin). Reusing this row (not creating a
-  // parallel one) keeps every existing Qushtapa 1 relationship
-  // (employees, activities, chat) intact. Not a plain upsert: the email
-  // itself changes as part of this rename, so `where: { email }` can't
-  // stay stable across re-runs — look up by the NEW email first (already
-  // renamed, most runs), fall back to the OLD one (first run only,
-  // migrating the placeholder), otherwise create fresh.
-  const saburPasswordHash = await bcrypt.hash("Sr@9907", 10);
-  const saburData = { name: "Sabur Xorani", email: "sabur.xorani@teammart.test", loginId: "em881", passwordHash: saburPasswordHash, role: "SUPERVISOR" };
-  let sabur = await prisma.user.findUnique({ where: { email: saburData.email } });
-  if (!sabur) sabur = await prisma.user.findUnique({ where: { email: "supervisor.qushtapa1@teammart.test" } });
-  sabur = sabur
-    ? await prisma.user.update({ where: { id: sabur.id }, data: saburData })
-    : await prisma.user.create({ data: saburData });
-
-  // Farman Farhad — second Supervisor, same permission model as Sabur
-  // (spec: "Do not treat this as a completely different role").
-  const farmanPasswordHash = await bcrypt.hash("Ff@0012", 10);
-  const farman = await prisma.user.upsert({
-    where: { email: "farman.farhad@teammart.test" },
-    update: { loginId: "em120", passwordHash: farmanPasswordHash },
+  const supervisor = await prisma.user.upsert({
+    where: { email: OPEN_ACCESS_ACCOUNTS.SUPERVISOR.email },
+    update: {},
     create: {
-      name: "Farman Farhad",
-      email: "farman.farhad@teammart.test",
-      loginId: "em120",
-      passwordHash: farmanPasswordHash,
+      name: OPEN_ACCESS_ACCOUNTS.SUPERVISOR.name,
+      email: OPEN_ACCESS_ACCOUNTS.SUPERVISOR.email,
+      passwordHash: await unusablePasswordHash(),
       role: "SUPERVISOR",
     },
   });
 
-  // A real, distinct Overlooking/Night Supervisor account for Qushtapa 1
-  // (not a shift label on the Supervisor login — see
-  // Market.overlookingSupervisorId's schema comment).
-  const overlookingPasswordHash = await bcrypt.hash("Overlooking123!", 10);
-  const overlookingSupervisor = await prisma.user.upsert({
-    where: { email: "overlooking.qushtapa1@teammart.test" },
-    update: {},
-    create: {
-      name: "Qushtapa 1 Overlooking",
-      email: "overlooking.qushtapa1@teammart.test",
-      passwordHash: overlookingPasswordHash,
-      role: "OVERLOOKING_SUPERVISOR",
-    },
-  });
-
   // ---------------------------------------------------------------
-  // Zones 1 and 3 — managed by Ali Hassan, unchanged from before.
+  // Zones 1 and 3 — no manager assigned yet (the Admin assigns one).
   // ---------------------------------------------------------------
   const zone1 = await prisma.zone.upsert({
     where: { number: 1 },
-    update: { managerId: regionalManager.id },
-    create: { number: 1, managerId: regionalManager.id },
+    update: {},
+    create: { number: 1 },
   });
   const zone3 = await prisma.zone.upsert({
     where: { number: 3 },
-    update: { managerId: regionalManager.id },
-    create: { number: 3, managerId: regionalManager.id },
+    update: {},
+    create: { number: 3 },
   });
   await findOrCreateMarket("Zhyan 1", zone1.id);
   await findOrCreateMarket("Dream City 1", zone3.id);
   await findOrCreateMarket("Empire 1", zone3.id, { status: "CLOSED" });
 
   // ---------------------------------------------------------------
-  // Zone 2 — managed by Ali Fars Gardi, 12 markets (spec: "Qushtapa 1,
+  // Zone 2 — managed by the Zone Manager, 12 markets (spec: "Qushtapa 1,
   // Qushtapa 2, plus the other markets belonging to Zone 2"). Qushtapa 1
   // and 2 move here from Zone 1 (their existing employees/Supervisor/
   // Overlooking relationships are untouched — only the market's own
@@ -140,7 +116,7 @@ async function main() {
   // ---------------------------------------------------------------
   const zone2 = await prisma.zone.upsert({
     where: { number: 2 },
-    update: { managerId: zoneManager.id },
+    update: {},
     create: { number: 2, managerId: zoneManager.id },
   });
 
@@ -153,11 +129,8 @@ async function main() {
   await prisma.market.updateMany({ where: { name: "Qushtapa 1", zoneId: zone1.id }, data: { zoneId: zone2.id } });
   await prisma.market.updateMany({ where: { name: "Qushtapa 2", zoneId: zone1.id }, data: { zoneId: zone2.id } });
 
-  const qushtapa1 = await findOrCreateMarket("Qushtapa 1", zone2.id, {
-    supervisorId: sabur.id,
-    overlookingSupervisorId: overlookingSupervisor.id,
-  });
-  const qushtapa2 = await findOrCreateMarket("Qushtapa 2", zone2.id, { supervisorId: farman.id });
+  const qushtapa1 = await findOrCreateMarket("Qushtapa 1", zone2.id, { supervisorId: supervisor.id });
+  const qushtapa2 = await findOrCreateMarket("Qushtapa 2", zone2.id);
   await findOrCreateMarket("Italyan 1", zone2.id);
   await findOrCreateMarket("Royal 1", zone2.id, { status: "MAINTENANCE" });
   for (let i = 5; i <= 12; i += 1) {
@@ -165,167 +138,38 @@ async function main() {
   }
 
   // ---------------------------------------------------------------
-  // Employees at Qushtapa 1 (Sabur's market) — the original two test
-  // employees, plus the new Morning Cashier and Morning Worker.
+  // One Worker and one Cashier, both at Qushtapa 1 on the Morning shift.
   // ---------------------------------------------------------------
-  const employeePasswordHash = await bcrypt.hash("Employee123!", 10);
-
-  const existingEmployee = await prisma.employee.findUnique({ where: { employeeCode: "TM-1001" } });
-  const employee = existingEmployee
-    ? existingEmployee
-    : await prisma.employee.create({
-        data: {
-          employeeCode: "TM-1001",
-          name: "Shalaw Naji",
-          passwordHash: employeePasswordHash,
-          position: "Cashier",
-          shift: "MORNING",
-          marketId: qushtapa1.id,
-        },
-      });
-
-  await prisma.employee.upsert({
-    where: { employeeCode: "TM-1002" },
+  const employee = await prisma.employee.upsert({
+    where: { employeeCode: WORKER_USERNAME },
     update: {},
     create: {
-      employeeCode: "TM-1002",
-      name: "Ahmed Kareem",
-      passwordHash: employeePasswordHash,
+      employeeCode: WORKER_USERNAME,
+      name: "Worker",
+      passwordHash: await bcrypt.hash(WORKER_PASSWORD, 10),
       position: "Worker",
-      secondaryRole: "Assistant",
-      shift: "AFTERNOON",
-      marketId: qushtapa1.id,
-    },
-  });
-
-  const cashierPasswordHash = await bcrypt.hash("Market2026!", 10);
-  await prisma.employee.upsert({
-    where: { username: "cashier_morning01" },
-    update: {},
-    create: {
-      employeeCode: "TM-2001",
-      name: "Ahmed Karim",
-      username: "cashier_morning01",
-      passwordHash: cashierPasswordHash,
-      position: "Cashier",
-      role: "CASHIER",
-      cashierShift: "MORNING",
-      department: "Snacks",
-      employmentStatus: "ACTIVE",
-      whatsappNumber: "9647501234567",
-      marketId: qushtapa1.id,
-    },
-  });
-  await prisma.employee.upsert({
-    where: { username: "cashier_evening01" },
-    update: {},
-    create: {
-      employeeCode: "TM-2002",
-      name: "Sara Ali",
-      username: "cashier_evening01",
-      passwordHash: cashierPasswordHash,
-      position: "Cashier",
-      role: "CASHIER",
-      cashierShift: "NIGHT",
-      department: "Cashier",
-      employmentStatus: "ACTIVE",
-      whatsappNumber: "9647509876543",
-      marketId: qushtapa1.id,
-    },
-  });
-
-  // Rostam Omer — Morning Cashier, em149/Rr@0049.
-  const rostamPasswordHash = await bcrypt.hash("Rr@0049", 10);
-  await prisma.employee.upsert({
-    where: { employeeCode: "em149" },
-    update: {},
-    create: {
-      employeeCode: "em149",
-      name: "Rostam Omer",
-      passwordHash: rostamPasswordHash,
-      position: "Cashier",
-      role: "CASHIER",
-      cashierShift: "MORNING",
-      username: "em149",
-      employmentStatus: "ACTIVE",
-      marketId: qushtapa1.id,
-    },
-  });
-
-  // Soran Tahseen — Morning Worker, em991/Ss@91.
-  const soranPasswordHash = await bcrypt.hash("Ss@91", 10);
-  await prisma.employee.upsert({
-    where: { employeeCode: "em991" },
-    update: {},
-    create: {
-      employeeCode: "em991",
-      name: "Soran Tahseen",
-      passwordHash: soranPasswordHash,
-      position: "Worker",
+      role: "WORKER",
       shift: "MORNING",
       employmentStatus: "ACTIVE",
       marketId: qushtapa1.id,
     },
   });
 
-  // ---------------------------------------------------------------
-  // Employees at Qushtapa 2 (Farman's market).
-  // ---------------------------------------------------------------
-
-  // Rahand Mohammed — Evening Cashier, em148/Rr@0070.
-  const rahandPasswordHash = await bcrypt.hash("Rr@0070", 10);
   await prisma.employee.upsert({
-    where: { employeeCode: "em148" },
+    where: { username: CASHIER_USERNAME },
     update: {},
     create: {
-      employeeCode: "em148",
-      name: "Rahand Mohammed",
-      passwordHash: rahandPasswordHash,
+      employeeCode: CASHIER_USERNAME,
+      username: CASHIER_USERNAME,
+      name: "Cashier",
+      passwordHash: await bcrypt.hash(CASHIER_PASSWORD, 10),
       position: "Cashier",
       role: "CASHIER",
-      cashierShift: "NIGHT",
-      username: "em148",
+      cashierShift: "MORNING",
       employmentStatus: "ACTIVE",
-      marketId: qushtapa2.id,
+      marketId: qushtapa1.id,
     },
   });
-
-  // Ramin — Night Cashier, em144/Rr@1414. CashierShift only has
-  // MORNING/EVENING (spec: "Cashiers are never on a Night shift" — see
-  // that enum's own schema comment); "Night" is recorded in the
-  // free-text `shift` field instead so it's still real, visible data
-  // rather than silently dropped or forced into the wrong bucket.
-  const raminPasswordHash = await bcrypt.hash("Rr@1414", 10);
-  await prisma.employee.upsert({
-    where: { employeeCode: "em144" },
-    update: {},
-    create: {
-      employeeCode: "em144",
-      name: "Ramin",
-      passwordHash: raminPasswordHash,
-      position: "Cashier",
-      role: "CASHIER",
-      shift: "NIGHT",
-      username: "em144",
-      employmentStatus: "ACTIVE",
-      marketId: qushtapa2.id,
-    },
-  });
-
-  // Hoshmand Ahmed and Aram — Evening Workers, credentials genuinely not
-  // assigned yet (spec: "do not invent credentials, leave User ID and
-  // password unassigned until provided"). employeeCode/passwordHash stay
-  // null — see the Employee model's own comment on why that's supported
-  // (they simply can't log in until a staff member assigns both via
-  // PATCH /api/employees/:id, or self-service once that's possible).
-  for (const name of ["Hoshmand Ahmed", "Aram"]) {
-    const existing = await prisma.employee.findFirst({ where: { name, marketId: qushtapa2.id, employeeCode: null } });
-    if (!existing) {
-      await prisma.employee.create({
-        data: { name, position: "Worker", shift: "NIGHT", employmentStatus: "ACTIVE", marketId: qushtapa2.id },
-      });
-    }
-  }
 
   // A couple of sample tasks so /api/dashboard and /api/reports have
   // something to show immediately after seeding.
@@ -340,7 +184,7 @@ async function main() {
           status: "APPROVED",
           employeeId: employee.id,
           marketId: qushtapa1.id,
-          reviewedById: sabur.id,
+          reviewedById: supervisor.id,
           reviewedAt: new Date(),
         },
         {
@@ -370,11 +214,11 @@ async function main() {
   // skips, it never duplicates.
   // ---------------------------------------------------------------
   const demoProducts = [
-    { barcode: "6291041500213", name: "Almarai Milk 1L", stockQuantity: 40, price: 1.75, marketId: qushtapa1.id, createdById: sabur.id },
-    { barcode: "5449000000996", name: "Coca-Cola 330ml", stockQuantity: 120, price: 0.75, marketId: qushtapa1.id, createdById: sabur.id },
-    { barcode: "7622210951965", name: "Puck Cheese 500g", stockQuantity: 25, price: 3.2, marketId: qushtapa1.id, createdById: sabur.id },
-    { barcode: "8000500310427", name: "Nescafe Gold 100g", stockQuantity: 30, price: 6.5, marketId: qushtapa2.id, createdById: farman.id },
-    { barcode: "5000112637922", name: "Lays Classic 150g", stockQuantity: 60, price: 1.1, marketId: qushtapa2.id, createdById: farman.id },
+    { barcode: "6291041500213", name: "Almarai Milk 1L", stockQuantity: 40, price: 1.75, marketId: qushtapa1.id, createdById: supervisor.id },
+    { barcode: "5449000000996", name: "Coca-Cola 330ml", stockQuantity: 120, price: 0.75, marketId: qushtapa1.id, createdById: supervisor.id },
+    { barcode: "7622210951965", name: "Puck Cheese 500g", stockQuantity: 25, price: 3.2, marketId: qushtapa1.id, createdById: supervisor.id },
+    { barcode: "8000500310427", name: "Nescafe Gold 100g", stockQuantity: 30, price: 6.5, marketId: qushtapa2.id, createdById: supervisor.id },
+    { barcode: "5000112637922", name: "Lays Classic 150g", stockQuantity: 60, price: 1.1, marketId: qushtapa2.id, createdById: supervisor.id },
   ];
   for (const product of demoProducts) {
     // Product.barcode is not unique in the schema (the same barcode can
@@ -460,21 +304,12 @@ async function main() {
     });
   }
 
-  console.log("Seed complete. Test logins:");
-  console.log("  Admin:         admin@teammart.test / Admin123!");
-  console.log("  Manager:       ali.hassan@teammart.test / Manager123! (Zones 1 & 3)");
-  console.log("  Zone Manager:  ali.farsgardi@teammart.test / ZoneManager123! (Ali Fars Gardi, Zone 2, 12 markets)");
-  console.log("  Supervisor:    em881 / Sr@9907 (Sabur Xorani, Qushtapa 1)");
-  console.log("  Supervisor:    em120 / Ff@0012 (Farman Farhad, Qushtapa 2)");
-  console.log("  Overlooking:   overlooking.qushtapa1@teammart.test / Overlooking123! (Qushtapa 1)");
-  console.log("  Employee:      TM-1001 / Employee123! (Shalaw Naji, Qushtapa 1)");
-  console.log("  Cashier:       cashier_morning01 / Market2026! (Ahmed Karim, Morning, Snacks)");
-  console.log("  Cashier:       cashier_evening01 / Market2026! (Sara Ali, Evening, Cashier)");
-  console.log("  Cashier:       em149 / Rr@0049 (Rostam Omer, Morning, Qushtapa 1)");
-  console.log("  Cashier:       em148 / Rr@0070 (Rahand Mohammed, Evening, Qushtapa 2)");
-  console.log("  Cashier:       em144 / Rr@1414 (Ramin, Night, Qushtapa 2)");
-  console.log("  Worker:        em991 / Ss@91 (Soran Tahseen, Morning, Qushtapa 1)");
-  console.log("  Worker:        Hoshmand Ahmed, Aram — pending, no credentials assigned yet (Qushtapa 2)");
+  console.log("Seed complete. Accounts:");
+  console.log(`  Admin:         username "${ADMIN_USERNAME}" + password`);
+  console.log("  Supervisor:    no credentials — tap the role on the login screen");
+  console.log("  Zone Manager:  no credentials — tap the role on the login screen");
+  console.log(`  Worker:        ${WORKER_USERNAME} / ${WORKER_PASSWORD} (Qushtapa 1, Morning)`);
+  console.log(`  Cashier:       ${CASHIER_USERNAME} / ${CASHIER_PASSWORD} (Qushtapa 1, Morning)`);
 }
 
 main()

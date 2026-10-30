@@ -77,6 +77,12 @@ export const listStaffAccountsQuerySchema = z.object({
   role: z.enum(["ADMIN", "REGIONAL_MANAGER", "SUPERVISOR", "OVERLOOKING_SUPERVISOR"]).optional(),
 });
 
+// Only the two roles that sign in without credentials (see
+// utils/openAccess.js) — Admin and the employee roles are not valid here.
+export const openLoginSchema = z.object({
+  role: z.enum(["SUPERVISOR", "REGIONAL_MANAGER"]),
+});
+
 export const staffIdLoginSchema = z.object({
   loginId: z.string().min(1),
   password: z.string().min(1),
@@ -270,6 +276,13 @@ export const createEmployeeSchema = z.object({
   secondaryRole: z.string().max(100).optional(),
   shift: z.enum(EMPLOYEE_SHIFTS).optional(),
   marketId: z.string().min(1),
+  // WORKER by default. CASHIER signs in with a username instead of an
+  // employee code, so for a Cashier the User ID chosen below becomes both.
+  role: z.enum(["WORKER", "CASHIER"]).optional(),
+  // Optional: the User ID the person will sign in with, chosen by the
+  // admin ("however they want") — same shape and case-insensitive,
+  // cross-table uniqueness as every other User ID. Generated if omitted.
+  employeeCode: USER_ID_SCHEMA.optional(),
   // Optional: caller can set an initial password, otherwise we generate one
   // and return it once (since employeeCode isn't a secret, the temp
   // password is the only credential the employee is given at creation).
