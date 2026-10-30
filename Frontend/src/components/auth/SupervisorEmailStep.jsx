@@ -26,7 +26,7 @@ export default function SupervisorEmailStep({ onSelect }) {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@teammart.com"
+          placeholder="you@coreline.com"
           autoFocus
           autoCapitalize="none"
           className="w-full rounded-lg bg-white/[0.04] border border-white/[0.06] ps-9 pe-3 py-3 text-base sm:text-sm text-white placeholder:text-[#4C5266] outline-none focus:border-[#F47A20]/50 transition-colors duration-200"

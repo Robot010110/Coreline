@@ -5,7 +5,7 @@ const COLLECTION_PHONE = "9647502329961"; // 0750 232 9961, country code applied
 
 // CartonFillingButton.jsx — spec §22: pressing this opens a real, new
 // WhatsApp conversation with a pre-filled message every time. Deliberately
-// an external wa.me link, not an internal TeamMart chat/model — a
+// an external wa.me link, not an internal Coreline chat/model — a
 // prototype integration, easy to swap for a real collection workflow
 // later without this button's callers needing to change.
 export default function CartonFillingButton({ marketName }) {

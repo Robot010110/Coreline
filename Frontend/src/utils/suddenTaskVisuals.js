@@ -14,7 +14,7 @@ import { Package, Sparkles, ClipboardList, Tag, Trash2, Store, ListChecks } from
 // at render time (same pattern as data/auth.js's ROLE_OPTIONS).
 // `glow` maps each category to one of index.css's shared neon glow
 // utilities (glow-orange/emerald/sky/violet/red) — same five-tone
-// TeamMart visual system used everywhere else, not a one-off per file.
+// Coreline visual system used everywhere else, not a one-off per file.
 export const CATEGORY_VISUALS = {
   GENERAL: { icon: ListChecks, label: "emp.catGeneralTask", tone: "text-[#F47A20]", bg: "bg-[#F47A20]/10", glow: "glow-orange" },
   RESTOCKING: { icon: Package, label: "emp.catRestocking", tone: "text-sky-400", bg: "bg-sky-500/10", glow: "glow-sky" },

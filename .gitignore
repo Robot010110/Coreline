@@ -44,6 +44,5 @@ backend/uploads/
 # Reference screenshots used to brief UI redesigns (Logen/employee/staff
 # mockups). Working material for briefing changes, not application
 # assets — nothing in the app imports them, so they stay local rather
-# than adding ~5MB of PNGs to history. The brand video masters in AION/
-# ARE tracked: the splash imports one of them.
+# than adding ~5MB of PNGs to history.
 IMAGE/

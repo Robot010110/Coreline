@@ -12,7 +12,7 @@ import { CATEGORY_LABELS } from "../../../data/workspaceData";
 // sorts by when they were actually reviewed.
 //
 // Two things in the visual reference are deliberately NOT reproduced,
-// because TeamMart has no data behind them and inventing them would put
+// because Coreline has no data behind them and inventing them would put
 // fake numbers on a performance record: the per-review percentage ring
 // and the star rating. There is no numeric score or rating on a review
 // in this schema. The row keeps the same shape and visual weight — a

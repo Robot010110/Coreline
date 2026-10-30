@@ -1,6 +1,6 @@
-# TEAMMART — Market Management Dashboard (Front End)
+# CORELINE — Market Management Dashboard (Front End)
 
-Front end for TEAMMART, built with React + Tailwind CSS. Every role
+Front end for CORELINE, built with React + Tailwind CSS. Every role
 (Employee, Cashier, Supervisor, Regional Manager, Admin) is connected to
 the real backend via `src/services/` — there is no mock data anywhere in
 this app (`src/data/mockData.js` doesn't exist; `src/data/auth.js` is
@@ -142,11 +142,12 @@ Fonts: **Plus Jakarta Sans** (display/headings), **Inter** (body/UI).
 
 ## Logo
 
-No logo file was supplied, so `src/components/common/Logo.jsx` renders a
-wordmark badge built from the brand tokens. Once you have the real TEAMMART
-logo asset, drop it in `public/logo.svg` and swap the badge `<div>` in
-`Logo.jsx` for an `<img src="/logo.svg" alt="TEAMMART" />` — no other files
-need to change.
+The Coreline mark lives in `src/components/common/CorelineMark.jsx` as an
+inline SVG (vector-traced from the brand artwork), alongside `BrandTile` —
+the cream app-icon tile every brand lockup uses. `Logo.jsx` pairs that tile
+with the CORELINE wordmark. The same mark is shipped as the favicon
+(`public/favicon.svg`), the iOS home-screen icon
+(`public/apple-touch-icon.png`) and a 512px PNG (`public/coreline-logo.png`).
 
 ## Adding future pages
 

@@ -1,11 +1,11 @@
 import { prisma } from "../lib/prisma.js";
 
-// excelExportAdapter.js — the OUTBOUND integration boundary: TeamMart
+// excelExportAdapter.js — the OUTBOUND integration boundary: Coreline
 // pushing break/attendance data OUT to the company's existing Excel
 // system, the mirror image of the INBOUND boundary that already exists
 // (AttendanceImportBatch + AttendanceSource.IMPORT +
 // attendanceController.importAttendanceRecords/utils/attendanceExcel.js
-// — the company's Excel export coming INTO TeamMart). That inbound path
+// — the company's Excel export coming INTO Coreline). That inbound path
 // is untouched by this file and needs no changes; this is the new,
 // separate direction the Phase 1 spec asks for.
 //
@@ -17,7 +17,7 @@ import { prisma } from "../lib/prisma.js";
 // pretends a real destination is connected.
 //
 // WHAT THIS IS: the one function — buildBreakAttendanceExportRows() —
-// that shapes TeamMart's own data into the flat row structure the
+// that shapes Coreline's own data into the flat row structure the
 // eventual export will need, decoupled from wherever those rows actually
 // end up. When the real Excel system's details are confirmed, only the
 // DESTINATION needs to be added (a new small function that takes these
@@ -31,8 +31,8 @@ import { prisma } from "../lib/prisma.js";
 //   - the exact target (API endpoint + auth, SFTP host + credentials,
 //     a shared network/cloud path, or a scheduled email recipient)
 //   - the expected file format/column order/header names on their side
-//   - how often an export should run and whether it's push (TeamMart
-//     initiates) or pull (their system fetches from TeamMart)
+//   - how often an export should run and whether it's push (Coreline
+//     initiates) or pull (their system fetches from Coreline)
 export async function buildBreakAttendanceExportRows({ marketId, from, to }) {
   const breaks = await prisma.break.findMany({
     where: {

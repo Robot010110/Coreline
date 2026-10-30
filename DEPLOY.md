@@ -1,4 +1,4 @@
-# Deploying TeamMart (get a live link)
+# Deploying Coreline (get a live link)
 
 This repo ships a **Render Blueprint** (`render.yaml`) that stands up the
 whole app — PostgreSQL + API + frontend — on Render's free tier. Render is

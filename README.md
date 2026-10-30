@@ -1,6 +1,6 @@
-# TeamMart
+# Coreline
 
-TeamMart is a role-based dashboard for managing supermarket staff and their
+Coreline is a role-based dashboard for managing supermarket staff and their
 daily work, across four roles: **Admin**, **Regional Manager**,
 **Supervisor**, and **Employee**. Each role sees a purpose-built view
 scoped to what they're responsible for — an Employee only sees their own
@@ -325,11 +325,11 @@ changes once real hardware/API details exist.
 
 ### Excel integration boundary
 
-The **inbound** direction (the company's Excel export → TeamMart) already
+The **inbound** direction (the company's Excel export → Coreline) already
 existed before this phase — `AttendanceImportBatch` +
 `AttendanceSource.IMPORT` + `POST /api/attendance/import` — untouched.
 
-The **outbound** direction (TeamMart → the company's Excel system) is new
+The **outbound** direction (Coreline → the company's Excel system) is new
 and is a boundary only, same as fingerprint above: `backend/src/services/excelExportAdapter.js`
 shapes break/attendance data into the flat row structure a future export
 will need (employee id/name/role, market, date, break start/end,
@@ -577,7 +577,7 @@ and Unread).
   favorite can never outlive or bypass the real authorization, and
   removing a favorite never touches the conversation or its history.
 - **Staff-to-staff contact eligibility is conservative and role-based**
-  (TeamMart has no separate "CEO" role — `StaffRole` is `ADMIN` /
+  (Coreline has no separate "CEO" role — `StaffRole` is `ADMIN` /
   `REGIONAL_MANAGER` / `SUPERVISOR` / `OVERLOOKING_SUPERVISOR`): a
   Regional Manager may contact any `ADMIN`; a Supervisor/Overlooking
   account may contact their own zone's Regional Manager(s) plus any

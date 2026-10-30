@@ -1180,7 +1180,7 @@ export async function getOrCreateEmployeeConversationForRegionalManager(req, res
 // staff accounts a given staff user is allowed to open a real
 // STAFF_DIRECT conversation with (and therefore also favorite as an
 // Important Contact — see addImportantContact). Conservative mapping
-// onto TeamMart's actual StaffRole enum (there is no separate "CEO"
+// onto Coreline's actual StaffRole enum (there is no separate "CEO"
 // role): the spec's own examples — CEO, Operations Manager, senior
 // management — are all ADMIN accounts here. A Regional Manager may
 // contact any ADMIN. A Supervisor/Overlooking Supervisor may contact

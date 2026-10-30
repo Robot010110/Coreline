@@ -1,4 +1,4 @@
-// cleanupPhase.test.js — TeamMart Final Repair, Cleanup & Consistency
+// cleanupPhase.test.js — Coreline Final Repair, Cleanup & Consistency
 // Pass: canonical department enforcement, the Total Sales Approve/Reject
 // workflow (previously permanently informational-only), Supervisor <->
 // Regional Manager chat contact visibility (previously one-directional),

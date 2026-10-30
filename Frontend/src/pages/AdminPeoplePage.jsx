@@ -128,7 +128,7 @@ function ShiftCell({ shift }) {
 // listing, search/filters, staff creation, the staff actions panel — is
 // carried forward here, not duplicated).
 //
-// TeamMart has always represented "people" as two distinct, real backend
+// Coreline has always represented "people" as two distinct, real backend
 // models: an Employee row (Worker/Cashier/Butcher, its own login) and a
 // staff User row (Supervisor/Overlooking Supervisor/Regional Manager/
 // Admin, a different login and permission system entirely). This page

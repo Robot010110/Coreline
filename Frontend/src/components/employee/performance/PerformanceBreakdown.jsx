@@ -7,7 +7,7 @@ import Sparkline from "./Sparkline";
 // components of this employee's performance.
 //
 // On the metrics: the design's example list (Attendance / Tasks /
-// Activity Quality / Compliance) is a visual reference, and TeamMart has
+// Activity Quality / Compliance) is a visual reference, and Coreline has
 // no compliance model and no employee-facing task-completion rate — so
 // those two are NOT fabricated. What is shown is what the backend can
 // really answer:

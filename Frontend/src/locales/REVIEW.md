@@ -46,7 +46,7 @@ Performance screen shows a score and history, so ئەدا was chosen.
 ### Pending → چاوەڕوانی پەسەندکردن
 **Alternative:** چاوەڕوان
 The full phrase means "awaiting approval", which is what this status
-actually means in AION — an item a Supervisor has not reviewed yet. Bare
+actually means in Coreline — an item a Supervisor has not reviewed yet. Bare
 چاوەڕوان just means "waiting" and is vaguer. The trade-off is length:
 this is a status badge, and the longer phrase may crowd narrow chips on
 a phone. **If it overflows in practice, shorten to چاوەڕوان.**
@@ -58,7 +58,7 @@ a phone. **If it overflows in practice, shorten to چاوەڕوان.**
 account types, so the till-specific word seemed right.
 
 ### Overlooking → چاودێر
-This is an AION-specific role name (`OVERLOOKING_SUPERVISOR` — the
+This is an Coreline-specific role name (`OVERLOOKING_SUPERVISOR` — the
 evening-shift counterpart to Supervisor), not a standard job title, so
 there is no established Kurdish for it. چاودێر means "watcher/monitor".
 **This one is a guess and most likely to need changing.**
@@ -83,5 +83,5 @@ The Settings Kurdish already in the app was good and was carried over
 verbatim, including: ڕێکخستنەکان, هەژمار, وشەی نهێنی, ئاگادارکردنەوەکان,
 زمان, گەڕانەوە بۆ پرۆفایل, چوونەدەرەوە, and the full password-privacy
 and notifications paragraphs. Only the two items noted above were
-changed, plus "TeamMart" → "AION" inside `modeAllSub` to match the
+changed, plus the brand name inside `modeAllSub` (now "Coreline") to match the
 rebrand.

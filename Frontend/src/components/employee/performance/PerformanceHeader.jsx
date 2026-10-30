@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Info, X } from "lucide-react";
+import { BrandTile } from "../../common/CorelineMark";
 
 // PerformanceHeader.jsx — the Performance page's own header, deliberately
 // NOT the standard left-aligned AppShell top bar every other Employee
@@ -8,7 +9,7 @@ import { ArrowLeft, Info, X } from "lucide-react";
 // `selfHeaderedRoutes` prop) so there is exactly one logo on screen.
 //
 // Composition follows the reference exactly:
-//   row 1   TM mark + TEAMMART wordmark, horizontal, centred
+//   row 1   Coreline mark + CORELINE wordmark, horizontal, centred
 //   row 2   [back]        Performance        [info]
 //   row 3   Your work, your progress.
 //
@@ -26,13 +27,11 @@ export default function PerformanceHeader({ onBack }) {
       <div className="flex items-center justify-center gap-2.5">
         <div className="relative">
           <div className="absolute -inset-2 rounded-2xl bg-[#F47A20]/25 blur-lg" aria-hidden="true" />
-          <div className="relative h-9 w-9 rounded-[11px] bg-gradient-to-br from-[#FF9A4D] to-[#E0561A] grid place-items-center shadow-[0_0_16px_2px_rgba(244,122,32,0.45)]">
-            <span className="font-display font-extrabold text-white text-[15px] tracking-tight">TM</span>
-          </div>
+          <BrandTile className="relative h-9 w-9 rounded-[11px] shadow-[0_0_16px_2px_rgba(244,122,32,0.35)]" />
         </div>
         <p className="font-display font-extrabold text-[19px] tracking-[0.03em] leading-none">
-          <span className="text-white">TEAM</span>
-          <span className="text-[#F47A20]">MART</span>
+          <span className="text-white">CORE</span>
+          <span className="text-[#F47A20]">LINE</span>
         </p>
       </div>
 

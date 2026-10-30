@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 const DAY_LABEL = ["S", "M", "T", "W", "T", "F", "S"];
 
-// WeeklyHoursChart.jsx — TeamMart visual system: a real animated bar
+// WeeklyHoursChart.jsx — Coreline visual system: a real animated bar
 // chart of the last 7 days' worked hours, built entirely from
 // GET /attendance/month's own real days[] (already fetched by
 // HomeTab.jsx for the Activity Overview period toggle — this reuses the

@@ -40,10 +40,20 @@ function resolveApiBaseUrl() {
 }
 
 const API_BASE_URL = resolveApiBaseUrl();
-const TOKEN_KEY = "teammart_token";
+const TOKEN_KEY = "coreline_token";
+// The key the token was saved under before the rebrand. Read once and
+// moved over, so anyone already signed in stays signed in.
+const LEGACY_TOKEN_KEY = "teammart_token";
 
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) return token;
+  const legacy = localStorage.getItem(LEGACY_TOKEN_KEY);
+  if (legacy) {
+    localStorage.setItem(TOKEN_KEY, legacy);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
+  }
+  return legacy;
 }
 
 export function setToken(token) {
@@ -52,6 +62,7 @@ export function setToken(token) {
 
 export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(LEGACY_TOKEN_KEY);
 }
 
 // A real Error subclass (not just a rejected plain object) so callers can

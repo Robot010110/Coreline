@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import en from "../locales/en/translation.json";
 import ckb from "../locales/ckb/translation.json";
 
-// i18n/index.js — AION's localization core.
+// i18n/index.js — Coreline's localization core.
 //
 // Two languages, matching what the product actually offers: English and
 // Sorani Kurdish (Central Kurdish). The BCP-47 tag for Sorani is `ckb`,
@@ -26,11 +26,14 @@ export const TAG_TO_API = { en: "ENGLISH", ckb: "KURDISH" };
 // login) can render in the right language: there is no profile to read
 // yet at that point. Once signed in, the account value wins and
 // overwrites this. Deliberately a separate key from the auth token.
-export const STORED_LANG_KEY = "aion_language";
+export const STORED_LANG_KEY = "coreline_language";
+// Pre-rebrand key — still read as a fallback so a saved language choice
+// survives the rename.
+const LEGACY_STORED_LANG_KEY = "aion_language";
 
 export function readStoredTag() {
   try {
-    const v = localStorage.getItem(STORED_LANG_KEY);
+    const v = localStorage.getItem(STORED_LANG_KEY) ?? localStorage.getItem(LEGACY_STORED_LANG_KEY);
     return v && LANGUAGES[v] ? v : null;
   } catch {
     // Private mode / blocked site data — fall back to the default rather
@@ -123,7 +126,7 @@ export function setLanguageTag(tag) {
 // ends, so a choice from a past visit can never masquerade as "just
 // made" and wrongly override a real account preference on some later,
 // unrelated login.
-const EXPLICIT_CHOICE_KEY = "aion_language_explicit";
+const EXPLICIT_CHOICE_KEY = "coreline_language_explicit";
 
 function markLanguageExplicit() {
   try {

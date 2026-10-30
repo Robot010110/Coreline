@@ -1,5 +1,5 @@
 // shiftSchedule.js — Attendance + Shift Timing: the official shift clock
-// (start/end hour) for AION's three EmployeeShift values, plus the pure
+// (start/end hour) for Coreline's three EmployeeShift values, plus the pure
 // classification math that turns one AttendanceRecord's real
 // checkIn/checkOut/breakStart/breakEnd/punishmentHours into the separate,
 // distinguishable facts the spec asks for (late time, early work,

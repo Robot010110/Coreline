@@ -1,4 +1,4 @@
-// Prisma schema for TEAMMART.
+// Prisma schema for CORELINE.
 //
 // This is an evolution of the original schema. It keeps the same core
 // idea (Zone -> Market -> Employee) but adds what the new frontend
@@ -23,7 +23,7 @@ datasource db {
   url      = env("DATABASE_URL")
   // Explicit shadow database. Prisma needs a scratch database to diff
   // migrations against, and it MUST NOT be the application database —
-  // pointing it at `teammart` would drop and recreate real data. Naming
+  // pointing it at `coreline` would drop and recreate real data. Naming
   // it here means the safe target is configuration, not something each
   // developer has to remember to pass on the command line.
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
@@ -757,7 +757,7 @@ model Market {
   // employee's profile picture. Nullable: most markets start with none
   // (a Regional Manager assigns one later via PATCH /api/markets/:id,
   // same generic update endpoint name/status already use — see
-  // marketsController.updateMarket) — the frontend shows a TeamMart fallback
+  // marketsController.updateMarket) — the frontend shows a Coreline fallback
   // placeholder, never a broken image or an employee photo, until then.
   photoUrl     String?
   zoneId       Int
@@ -1668,13 +1668,13 @@ enum BreakStatus {
 // fingerprint machine, not a real connection to it (no such hardware/API
 // access exists yet — see backend/src/services/fingerprintAdapter.js's
 // own comment for exactly what's real vs. a stand-in here). Every event
-// TeamMart will ever need to react to, regardless of which real system
+// Coreline will ever need to react to, regardless of which real system
 // eventually sends it, is captured by this one row: an idempotency key
 // from that system, which employee it's about, when it happened, what
 // kind of event it was, which device reported it, and the raw payload
 // preserved verbatim (same "preserve the original data" convention
 // AttendanceRecord.rawImportData already uses for Excel rows) so nothing
-// is lost even before TeamMart has a rule for every field yet.
+// is lost even before Coreline has a rule for every field yet.
 model FingerprintEvent {
   id              String                @id @default(cuid())
   externalEventId String                @unique // dedupe key from the external system — the same physical scan is never double-processed

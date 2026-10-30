@@ -411,7 +411,7 @@ test("SECURITY: the Admin recompute re-derives from source data rather than acce
 
 test("SECURITY: there is no endpoint that writes a performance score", async () => {
   // Any of these existing as a write path would defeat the whole
-  // "AION calculates the performance" principle.
+  // "Coreline calculates the performance" principle.
   const attempts = [
     ["POST", "/api/performance/me", { score: 100 }],
     ["POST", `/api/performance/employees/${workerA.id}`, { score: 100 }],

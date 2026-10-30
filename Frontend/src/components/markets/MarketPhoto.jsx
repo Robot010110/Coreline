@@ -16,8 +16,8 @@ const SIZE_CLASSES = {
 };
 const ICON_SIZE = { sm: 20, lg: 34, hero: 44 };
 
-// A market's own TeamMart-branded fallback — a Store glyph on the same
-// orange gradient Logo.jsx's wordmark badge uses, so an unphotographed
+// A market's own Coreline-branded fallback — a Store glyph on the app's
+// orange accent gradient, so an unphotographed
 // market still reads as "this app's own placeholder" rather than a
 // broken image or a borrowed employee avatar (spec: never fall back to
 // an employee profile picture).
@@ -28,7 +28,7 @@ function MarketPhotoFallback({ size }) {
   // and a column of full-orange squares would make orange the loudest
   // thing on a screen where it is supposed to mean "action" — this
   // keeps the placeholder in the app's own surface family while the
-  // glyph still reads as TeamMart's.
+  // glyph still reads as Coreline's.
   return (
     <div
       className={`${SIZE_CLASSES[size]} ${isHero ? "" : "shrink-0 ring-1 ring-white/[0.08]"} grid place-items-center
@@ -43,7 +43,7 @@ function MarketPhotoFallback({ size }) {
 // used consistently everywhere a market is represented: the Markets list
 // card (size="sm") and the market detail header (size="lg"). Never an
 // employee profile picture, never a generic supermarket stock icon — a
-// real photo of THIS market, or the branded TeamMart fallback above until
+// real photo of THIS market, or the branded Coreline fallback above until
 // one is assigned.
 //
 // editable + marketId together turn this into the upload control too

@@ -1,5 +1,5 @@
 // BottomNav.jsx — the mobile tab bar (Home/Tasks/Activity/Chat/Profile).
-// Redesigned as a floating premium pill (TeamMart visual system pass):
+// Redesigned as a floating premium pill (Coreline visual system pass):
 // the active tab gets an orange glow pill behind its icon, smoothly
 // cross-fading in via CSS transitions on class change — no JS-measured
 // sliding indicator, so it can never desync from the real active route.

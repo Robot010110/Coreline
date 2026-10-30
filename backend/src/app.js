@@ -70,7 +70,7 @@ app.set("trust proxy", 1);
 // JSON-only API; this app serves no HTML from the backend.
 app.use(helmet());
 
-// CORS_ORIGIN — comma-separated allowlist (e.g. "https://app.teammart.com").
+// CORS_ORIGIN — comma-separated allowlist (e.g. "https://app.coreline.com").
 // Unset in dev so the Vite frontend (localhost:5173) keeps working without
 // extra setup; set it before deploying to production. Not enforced by
 // default so this change can't break an existing deployment that hasn't

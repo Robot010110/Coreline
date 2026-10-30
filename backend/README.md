@@ -1,4 +1,4 @@
-# TEAMMART Backend (v2)
+# CORELINE Backend (v2)
 
 Express + Prisma + PostgreSQL API built to match the `teammart_draft_1`
 frontend. This is a rebuild of the original `backend/` folder — most of

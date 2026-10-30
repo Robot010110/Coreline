@@ -1,7 +1,7 @@
 // productionAudit.test.js — focused coverage added by the 2026-09
 // production security audit for attack surfaces that had no explicit
 // test before, even though the underlying code was already correct
-// (see AION_SECURITY_AUDIT_REPORT.md §3/§9). Nothing in src/ changed to
+// (see CORELINE_SECURITY_AUDIT_REPORT.md §3/§9). Nothing in src/ changed to
 // make these pass — they document/lock in behavior that was already
 // there: role-escalation via registration/self-profile mass assignment,
 // and cross-role/cross-market IDOR on a few endpoints not yet covered

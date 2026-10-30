@@ -16,7 +16,7 @@ function timeLabel(iso) {
 // ReportsSection.jsx — real, market-scoped PriceReport data (a Cashier
 // flagging a shelf-vs-system label/price mismatch — the exact
 // "incorrect label/price/mismatch" report the spec describes). Not a
-// new reporting architecture — this is TeamMart's existing PriceReport
+// new reporting architecture — this is Coreline's existing PriceReport
 // model, just given its first Supervisor-side view.
 export default function ReportsSection({ marketId }) {
   const { t } = useTranslation();

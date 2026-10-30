@@ -1,6 +1,6 @@
-# AION — Sorani Kurdish terminology
+# Coreline — Sorani Kurdish terminology
 
-The agreed Kurdish for AION's core concepts. **Translate every screen
+The agreed Kurdish for Coreline's core concepts. **Translate every screen
 using these exact words.** The same English concept must never become two
 different Kurdish words on two different screens.
 
@@ -109,7 +109,7 @@ reasoning and the alternatives are in `REVIEW.md`.
    currency, and Arabic-Indic digits alongside those read badly. This
    corrects one inconsistency found in the existing Kurdish, where
    `passwordTooShort` used ٨ while every other number was Western.
-2. **Brand names are never translated** — AION and TeamMart stay as-is.
+2. **Brand names are never translated** — Coreline stays as-is.
 3. **User-generated content is never translated** — chat messages,
    names, notes, market names.
 4. **Keep interpolation placeholders exactly** — `{{name}}`, `{{count}}`.

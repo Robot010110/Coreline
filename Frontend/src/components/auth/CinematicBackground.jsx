@@ -7,7 +7,7 @@ import staffPhoto from "../../assets/login/staff-lobby.jpg";
 // deliberately distinct from every other screen's flat #050A18 (see
 // AppShell.jsx). Now backed by the three real photographs supplied for
 // this flow (see assets/login/) instead of a CSS/SVG approximation —
-// each is a real TeamMart-branded night scene, not a generic stock
+// each is a real Coreline-branded night scene, not a generic stock
 // photo, so it's composited with a dark gradient/vignette on top
 // (identical treatment to the login card everywhere else) purely to
 // keep white text and glass cards readable, never to hide the image.
@@ -15,10 +15,10 @@ import staffPhoto from "../../assets/login/staff-lobby.jpg";
 // `variant` maps each of the three login screens to its own photo, per
 // the design brief's instruction that Employee/Staff/role-select
 // shouldn't share one identical background:
-//   storefront   Stage 1 (Who's logging in?) — the TeamMart storefront
+//   storefront   Stage 1 (Who's logging in?) — the Coreline storefront
 //                at night, neon sign lit.
 //   produce      Employee login — the in-market grocery aisle.
-//   aisles       Staff login — the TeamMart office lobby/boardroom.
+//   aisles       Staff login — the Coreline office lobby/boardroom.
 // Each photo's object-position is tuned per breakpoint: mobile crops
 // the wide axis (the phone is narrower than the photo), desktop crops
 // the tall axis (the photo is narrower than the screen) — so the same
@@ -35,11 +35,11 @@ import staffPhoto from "../../assets/login/staff-lobby.jpg";
 // shadow now (see RoleSelectScreen.jsx) rather than heavily darkening
 // the photo — the photo is the point, it should stay visible.
 const VARIANTS = {
-  // TEAMMART sign sits ~28-45% down the storefront photo.
+  // CORELINE sign sits ~28-45% down the storefront photo.
   storefront: { photo: storefrontPhoto, focusMobile: "50% 32%", focusDesktop: "48% 30%", zoomedOut: true },
   // Produce stands sit lower-left in the aisle photo.
   produce: { photo: employeePhoto, focusMobile: "45% 55%", focusDesktop: "40% 45%" },
-  // TM logo/wordmark sits left-of-centre in the lobby photo.
+  // Coreline logo/wordmark sits right-of-centre in the lobby photo.
   aisles: { photo: staffPhoto, focusMobile: "68% 45%", focusDesktop: "58% 45%" },
 };
 

@@ -19,7 +19,7 @@ import { submitWorkReview } from "../../services/workReviewService";
 // has no field capable of expressing one: the point value each level is
 // worth is decided server-side by the scoring profile, and the API rejects
 // any request that tries to supply one. That is deliberate — it is what
-// makes "the Supervisor judges the work, AION calculates the performance"
+// makes "the Supervisor judges the work, Coreline calculates the performance"
 // true in the code rather than just in the design doc.
 //
 // The point values behind these levels are intentionally NOT shown here

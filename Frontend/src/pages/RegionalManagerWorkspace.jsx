@@ -35,7 +35,7 @@ const BASE_PATH = "/rm";
 // RegionalManagerWorkspace.jsx — Regional Manager's entry point, the
 // same mobile-first AppShell/BottomNav shell every other role uses
 // (Employee/Cashier/Supervisor) instead of a permanent desktop sidebar —
-// "TeamMart, but for a Regional Manager," not a separate application.
+// "Coreline, but for a Regional Manager," not a separate application.
 // Every screen below is backed by real data (marketManagementService.js,
 // staffEmployeeService.js, chatService.js) and real server-side
 // authorization (a Regional Manager can only ever reach markets/

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-// AnimatedNumber.jsx — TeamMart visual system: counts up from 0 to a
+// AnimatedNumber.jsx — Coreline visual system: counts up from 0 to a
 // REAL value on mount/change (never a fabricated animation over a fake
 // number — the value itself always comes from the caller's own real
 // data). Respects prefers-reduced-motion (jumps straight to the final

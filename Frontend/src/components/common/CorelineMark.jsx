@@ -1,0 +1,36 @@
+// CorelineMark.jsx — the Coreline logo mark (the "C" cut by two
+// diagonal strokes), vector-traced from the supplied brand artwork so it
+// stays crisp at every size. Fills with currentColor, so the caller sets
+// both its size and colour through className (e.g. "h-5 w-5 text-[#161616]").
+//
+// The official app-icon treatment is this mark in near-black on a warm
+// cream rounded tile — see BrandTile below, which every brand lockup in
+// the app uses so the tile colours live in one place.
+const MARK_PATH =
+  "M236 401C255 397 272 390 287 380C292 376 311 358 349 321L403 268L403 226L403 185L399 188C397 190 376 211 352 235C327 259 290 296 268 318C246 339 218 367 204 380L180 404L203 404C221 403 228 403 236 401ZM171 387C178 380 220 338 264 295C308 252 355 205 370 191C384 176 396 164 396 164C396 164 371 170 341 178C297 188 285 192 281 194C276 197 260 213 213 258C122 348 96 374 96 375C96 376 119 388 129 392C138 395 156 400 157 400C158 400 164 394 171 387ZM140 304C140 304 138 302 136 300C133 298 128 294 125 291C88 255 81 201 106 155C117 134 131 119 151 107C179 90 215 86 247 95C264 100 283 110 295 122C300 126 301 127 303 126C306 126 377 95 380 93L383 92L380 87C356 52 312 22 269 11C246 5 241 5 214 4C187 4 182 5 162 10C98 26 46 71 20 133C-13 214 6 301 69 355L79 364L110 334C126 318 140 304 140 304Z";
+
+export default function CorelineMark({ className = "", title }) {
+  return (
+    <svg
+      viewBox="0 0 408 408"
+      className={className}
+      fill="currentColor"
+      role={title ? "img" : undefined}
+      aria-hidden={title ? undefined : "true"}
+      aria-label={title}
+    >
+      <path d={MARK_PATH} />
+    </svg>
+  );
+}
+
+// BrandTile — the cream app-icon tile with the mark centred inside.
+// `className` carries the tile's own size, rounding and shadow (they vary
+// per header); `markClassName` sizes the mark within it.
+export function BrandTile({ className = "", markClassName = "h-[58%] w-[58%]" }) {
+  return (
+    <div className={`grid shrink-0 place-items-center bg-gradient-to-br from-[#FBF8F2] to-[#E9E3D7] ${className}`}>
+      <CorelineMark className={`text-[#161616] ${markClassName}`} />
+    </div>
+  );
+}

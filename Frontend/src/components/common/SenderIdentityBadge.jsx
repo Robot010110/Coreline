@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 // place that renders "who sent this" consistently across the
 // notification card, detail screen, and management history. Admin gets
 // a restrained gold accent (a small star + thin gold line), never an
-// oversized/gamified treatment; a Zone Manager gets normal TeamMart
+// oversized/gamified treatment; a Zone Manager gets normal Coreline
 // management styling with their zone number so an employee immediately
 // understands "this came from my zone's management," not "an anonymous
 // admin thing."

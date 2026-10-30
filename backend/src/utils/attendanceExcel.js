@@ -128,7 +128,7 @@ export async function buildAttendanceReportWorkbook({
   exceptionRows,
 }) {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "TeamMart";
+  workbook.creator = "Coreline";
   workbook.created = new Date();
 
   const meta = [
